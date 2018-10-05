@@ -31,10 +31,18 @@ class MAINW:
     def door(self, argumentto):
         if argumentto == 1:
             print('Woking server...')
-            subprocess.run(['wol', confparser['DEFAULT']['MAC_ADDR']])
+            try:
+                subprocess.run(['wol', confparser['DEFAULT']['MAC_ADDR']])
+            except FileNotFoundError:
+                print('Probably your host missing "wol" package. You must install it that we could continue')
+                os.sys.exit(1)
             print('Sent packet!')
         elif argumentto == 2:
-            sshcli.connect(confparser['DEFAULT']['SSH_ADDR'], username=confparser['DEFAULT']['SSH_USER'], password=confparser['DEFAULT']['SSH_PASSWD'])
+            try:
+                sshcli.connect(confparser['DEFAULT']['SSH_ADDR'], username=confparser['DEFAULT']['SSH_USER'], password=confparser['DEFAULT']['SSH_PASSWD'])
+            except paramiko.ssh_exception.AuthenticationException:
+                print("Can't login due wrong password or login. Change them and try again.")
+                os.sys.exit(1)
             sshcli.exec_command('powerOffVms && halt')
             print('Executed command to shutdown. Please wait')
             sshcli.close()
