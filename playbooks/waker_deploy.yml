@@ -1,0 +1,79 @@
+---
+- name: Deploy Crontab-UI with waker script to ESXi PC
+  hosts: remote
+  become: True
+  gather_facts: True
+
+  tasks:
+    - name: "Add repository & install software if centos/redhat"
+      block:
+        - name: Add repository
+          yum:
+            name: https://centos7.iuscommunity.org/ius-release.rpm
+            state: present
+            update_cache: True
+        - name: Install python3
+          yum:
+            name: 
+              - python36u
+              - python36u-pip
+              - npm
+              - nginx
+            update_cache: True
+        - name: Install WOL
+          yum:
+            name: http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/w/wol-0.7.1-4.el6.x86_64.rpm
+            state: present
+            update_cache: True
+      when: 
+       - ansible_distribution == "CentOS"
+       - ansible_distribution_major_version == "7"
+
+    - name: "Add repository & install software if debian/ubuntu"
+      block:
+        - name: Install python & pip
+          apt: 
+            name: 
+              - python3
+              - python3-pip
+              - npm
+              - nginx
+            state: present
+            update_cache: True
+      when:
+        - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+    
+    - name: Install python deps & npm cronie
+      block:
+        - name: Install python deps
+          pip:
+            - argparse
+            - configparser
+            - paramiko
+          state: present
+
+        - name: Install crontab-ui
+          npm: 
+            name:
+             - crontab-ui
+             - pm2
+            state: present
+
+    - name: Copy nginx config & setup it all
+      block:
+        - name: Copy config
+          copy: src="../nginx/default.conf" dest="/etc/nginx/conf.d/default.conf"
+        
+        - name: Enable startup of nginx and pm2
+          shell: "pm2 start crontab-ui && pm2 startup && pm2 save"
+          service: 
+            name: nginx
+            state: started
+            enabled: True
+
+    - name: Copy files
+      copy: src={{ item }} dest=/home/
+      loop:
+        - "../main.py"
+        - "../creds.config"
+...

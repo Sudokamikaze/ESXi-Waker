@@ -1,0 +1,31 @@
+---
+- name: Fill variables for deploying
+  hosts: localhost
+  gather_facts: no
+
+  vars_prompt:
+    - name: template_ssh_host
+      prompt: "Enter the IP of ESXi server "
+      private: no
+    - name: template_ssh_user
+      prompt: "Enter the username of ESXi server "
+      default: "root"
+      private: no
+    - name: template_ssh_port
+      prompt: "Enter SSH port "
+      default: "22"
+      private: no
+    - name: template_macaddr
+      prompt: "Enter server's MACADDR: "
+      private: no
+    - name: template_ssh_pass
+      prompt: "Enter password "
+      private: no
+
+  tasks:
+    - template: src={{ item.src }} dest={{ item.dest }}
+      with_items:
+        - { src: '../templates/inventory.j2', dest: '../playbooks/inventory' }
+        - { src: '../templates/creds.config.j2', dest: '../creds.config' }
+        - { src: '../templates/default.conf.j2', dest: '../nginx/default.conf' }
+...
