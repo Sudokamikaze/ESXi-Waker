@@ -1,5 +1,5 @@
 #!/bin/python3.6
-import os, sys
+import os
 import argparse, configparser
 import subprocess
 import paramiko
@@ -14,6 +14,9 @@ class MAINW:
     def __init__(self):
         argparser.add_argument("-STA", "--start", help="Wokes up server", action="store_true")
         argparser.add_argument("-STP", "--stop", help="Stops server", action="store_true")
+        if len(os.sys.argv) == 1:
+            argparser.print_help(os.sys.stderr)
+            os.sys.exit(1)
         sshcli.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         if os.path.exists(self.__config_path):
             confparser.read(self.__config_path)
