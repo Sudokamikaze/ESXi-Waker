@@ -1,7 +1,7 @@
 server {
 	listen 8001;
 
-	server_name {{ template_ssh_host }}
+	server_name {{ template_ssh_host }};
 
 	location / {
 		proxy_pass http://localhost:8000;
