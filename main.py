@@ -1,12 +1,13 @@
 #!/bin/python3.6
 import os
-import argparse, configparser
-import subprocess
-import paramiko
+from configparser import ConfigParser
+from argparse import ArgumentParser
+from subprocess import run
+from paramiko import SSHClient, ssh_exception, AutoAddPolicy
 
-argparser = argparse.ArgumentParser()
-confparser = configparser.ConfigParser()
-sshcli = paramiko.SSHClient()
+argparser = ArgumentParser()
+confparser = ConfigParser()
+sshcli = SSHClient()
 
 class MAINW:
     __config_path="creds.config"
@@ -17,7 +18,7 @@ class MAINW:
         if len(os.sys.argv) == 1:
             argparser.print_help(os.sys.stderr)
             os.sys.exit(1)
-        sshcli.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        sshcli.set_missing_host_key_policy(AutoAddPolicy())
         if os.path.exists(self.__config_path):
             confparser.read(self.__config_path)
         else:
@@ -32,7 +33,7 @@ class MAINW:
         if argumentto == 1:
             print('Woking server...')
             try:
-                subprocess.run(['wol', confparser['DEFAULT']['MAC_ADDR']])
+                run(['wol', confparser['DEFAULT']['MAC_ADDR']])
             except FileNotFoundError:
                 print('Probably your host missing "wol" package. You must install it that we could continue')
                 os.sys.exit(1)
@@ -40,7 +41,7 @@ class MAINW:
         elif argumentto == 2:
             try:
                 sshcli.connect(confparser['DEFAULT']['SSH_ADDR'], username=confparser['DEFAULT']['SSH_USER'], password=confparser['DEFAULT']['SSH_PASSWD'])
-            except paramiko.ssh_exception.AuthenticationException:
+            except ssh_exception.AuthenticationException:
                 print("Can't login due wrong password or login. Change them and try again.")
                 os.sys.exit(1)
             sshcli.exec_command('powerOffVms && halt')
