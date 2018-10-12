@@ -5,7 +5,7 @@
   gather_facts: True
 
   tasks:
-    - name: "Add repository & install software if centos/redhat"
+    - name: "Add repository & install software if centos"
       block:
         - name: Add repository
           yum:
@@ -20,6 +20,11 @@
               - npm
               - nginx
             update_cache: True
+        - name: Link python 3.6 to 3
+          file:
+            src: "/usr/bin/python3.6"
+            dest: "/usr/bin/python3"
+            state: link
         - name: Install WOL
           yum:
             name: http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/w/wol-0.7.1-4.el6.x86_64.rpm

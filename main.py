@@ -1,4 +1,4 @@
-#!/bin/python3.6
+#!/usr/bin/env python3
 from os import path
 from sys import exit, argv, stderr
 from configparser import ConfigParser
