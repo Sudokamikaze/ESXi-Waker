@@ -12,7 +12,7 @@
             name: https://centos7.iuscommunity.org/ius-release.rpm
             state: present
             update_cache: True
-        - name: Install python3
+        - name: Install software
           yum:
             name: 
               - python36u
@@ -36,15 +36,21 @@
 
     - name: "Add repository & install software if debian/ubuntu"
       block:
-        - name: Install python & pip
+        - name: Install software
           apt: 
             name: 
               - python3
               - python3-pip
               - npm
               - nginx
+              - etherwake
             state: present
             update_cache: True
+        - name: Link etherwake to wol
+          file:
+            src: /usr/bin/etherwake
+            dest: /usr/bin/wol
+            state: link
       when:
         - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
     

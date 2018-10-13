@@ -36,7 +36,10 @@ class MAINW:
             try:
                 run(['wol', confparser['DEFAULT']['MAC_ADDR']])
             except FileNotFoundError:
-                print('Probably your host missing "wol" package. You must install it that we could continue')
+                if path.exists('/usr/bin/etherwake'):
+                    print('Link statically /usr/bin/etherwake to /usr/bin/wol that we could continue')
+                else:
+                    print('Probably your host missing "wol" package. You must install it that we could continue')
                 exit(1)
             print('Sent packet!')
         elif argumentto == 2:
