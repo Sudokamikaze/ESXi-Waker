@@ -9,23 +9,18 @@ from paramiko import SSHClient, ssh_exception, AutoAddPolicy
 argparser = ArgumentParser()
 confparser = ConfigParser()
 sshcli = SSHClient()
+config_path="creds.config"
 
 class MAINW:
-    __config_path="creds.config"
 
     def __init__(self):
+        sshcli.set_missing_host_key_policy(AutoAddPolicy())
         argparser.add_argument("-STA", "--start", help="Wokes up server", action="store_true")
         argparser.add_argument("-STP", "--stop", help="Stops server", action="store_true")
         if len(argv) == 1:
             argparser.print_help(stderr)
             exit(1)
-        sshcli.set_missing_host_key_policy(AutoAddPolicy())
-        if path.exists(self.__config_path):
-            confparser.read(self.__config_path)
-        else:
-            print('No config found.')
-            exit(1) 
-        if argparser.parse_args().start:
+        elif argparser.parse_args().start:
             self.door(argumentto=1)
         elif argparser.parse_args().stop:
             self.door(argumentto=2)
@@ -52,5 +47,9 @@ class MAINW:
             print('Executed command to shutdown. Please wait')
             sshcli.close()
 
-
-classcall = MAINW()
+if path.exists(config_path):
+    confparser.read(config_path)
+    classcall = MAINW()
+else:
+    print('No config found.')
+    exit(1) 
