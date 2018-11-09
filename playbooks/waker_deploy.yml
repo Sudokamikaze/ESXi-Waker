@@ -30,6 +30,16 @@
             name: http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/w/wol-0.7.1-4.el6.x86_64.rpm
             state: present
             update_cache: True
+        - name: Create firewall rules
+          firewalld:
+            port: 8001/tcp
+            permanent: True
+            state: enabled
+        - name: Disable SELINUX
+          lineinfile:
+            path: /etc/selinux/config
+            regexp: '^SELINUX='
+            line: 'SELINUX=disabled'
       when: 
        - ansible_distribution == "CentOS"
        - ansible_distribution_major_version == "7"
@@ -74,7 +84,7 @@
       block:
         - name: Copy config
           copy: src="../nginx/default.conf" dest="/etc/nginx/conf.d/default.conf"
-        
+                
         - name: Enable startup of nginx and pm2
           shell: "pm2 start crontab-ui && pm2 startup && pm2 save"
           service: 
