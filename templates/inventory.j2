@@ -2,4 +2,4 @@
 localhost ansible_connection=local ansible_python_interpreter=python
 
 [remote]
-deploy ansible_ssh_host={{ template_ssh_host }} ansible_ssh_port={{ template_ssh_port }} ansible_ssh_user={{ template_ssh_user }} ansible_ssh_pass={{ template_ssh_pass }}
+deploy ansible_ssh_host={{ template_ssh_host_vm }} ansible_ssh_port={{ template_ssh_port_vm }} ansible_ssh_user={{ template_ssh_user_vm }} ansible_ssh_pass={{ template_ssh_pass_vm }}

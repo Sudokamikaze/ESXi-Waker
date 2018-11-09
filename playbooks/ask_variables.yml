@@ -5,21 +5,33 @@
 
   vars_prompt:
     - name: template_ssh_host
-      prompt: "Enter the IP of ESXi server "
+      prompt: "Enter IP of ESXi server "
       private: no
     - name: template_ssh_user
-      prompt: "Enter the username of ESXi server "
+      prompt: "Enter SSH username of ESXi server "
       default: "root"
       private: no
     - name: template_ssh_port
-      prompt: "Enter SSH port "
+      prompt: "Enter SSH port of ESXi server "
       default: "22"
       private: no
-    - name: template_macaddr
-      prompt: "Enter server's MACADDR: "
-      private: no
     - name: template_ssh_pass
-      prompt: "Enter password "
+      prompt: "Enter SSH password of ESXi server "
+      private: no
+    - name: template_macaddr
+      prompt: "Enter MACADDR of ESxi server "
+      private: no
+    - name: template_ssh_host_vm
+      prompt: "Enter IP of Centos/Debian virtual machine: "
+      private: no
+    - name: template_ssh_user_vm
+      prompt: "Enter SSH username of Centos/Debian virtual machine: "
+      private: no
+    - name: template_ssh_port_vm
+      prompt: "Enter SSH port of Centos/Debian virtual machine: "
+      private: no
+    - name: template_ssh_pass_vm
+      prompt: "Enter SSH password of Centos/Debian virtual machine: "
       private: no
 
   tasks:
