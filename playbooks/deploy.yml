@@ -1,40 +1,45 @@
 ---
-- name: Deploy Crontab-UI with waker script to ESXi PC
+- name: Deploy ESXWaker
   hosts: remote
   become: True
   gather_facts: True
 
   tasks:
-    - name: "Add repository & install software if centos"
-      block:
-        - name: Add repository
-          yum:
+    - name: Perform action for Centos
+      block: 
+        - name: Connect repo
+          yum: 
             name: https://centos7.iuscommunity.org/ius-release.rpm
-            state: present
-            update_cache: True
+          
         - name: Install software
-          yum:
-            name: 
-              - python36u
+          yum: 
+            name: "{{ packages }}"
+            update_cache: True
+          vars:
+            packages:
+              - python36u 
               - python36u-pip
               - npm
               - nginx
-            update_cache: True
-        - name: Link python 3.6 to 3
+
+        - name: Link pip3.6 to pip
           file:
-            src: "/usr/bin/python3.6"
-            dest: "/usr/bin/python3"
+            src: /usr/bin/pip3.6
+            dest: /usr/bin/pip
             state: link
+        
         - name: Install WOL
           yum:
             name: http://dl.fedoraproject.org/pub/epel/6/x86_64/Packages/w/wol-0.7.1-4.el6.x86_64.rpm
             state: present
             update_cache: True
+        
         - name: Create firewall rules
           firewalld:
-            port: 8001/tcp
+            port: 80/tcp
             permanent: True
             state: enabled
+        
         - name: Disable SELINUX
           lineinfile:
             path: /etc/selinux/config
@@ -48,14 +53,17 @@
       block:
         - name: Install software
           apt: 
-            name: 
-              - python3
-              - python3-pip
-              - npm
-              - nginx
-              - etherwake
+            name: "{{ packages }}"
             state: present
             update_cache: True
+          vars:
+            packages:
+                - python3
+                - python3-pip
+                - npm
+                - nginx
+                - etherwake
+        
         - name: Link etherwake to wol
           file:
             src: /usr/bin/etherwake
@@ -63,21 +71,17 @@
             state: link
       when:
         - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-    
+
     - name: Install python deps & npm cronie
       block:
         - name: Install python deps
           pip:
-            - argparse
-            - configparser
-            - paramiko
-          state: present
+            name: argparse,configparser,paramiko
+            state: present
 
         - name: Install crontab-ui
           npm: 
-            name:
-             - crontab-ui
-             - pm2
+            name: crontab-ui,pm2
             state: present
 
     - name: Copy nginx config & setup it all
@@ -85,8 +89,10 @@
         - name: Copy config
           copy: src="../nginx/default.conf" dest="/etc/nginx/conf.d/default.conf"
                 
-        - name: Enable startup of nginx and pm2
+        - name: Enable startup of pm2
           shell: "pm2 start crontab-ui && pm2 startup && pm2 save"
+          
+        - name: Start & Enable nginx service
           service: 
             name: nginx
             state: started
