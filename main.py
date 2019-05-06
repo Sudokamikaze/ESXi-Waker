@@ -40,8 +40,11 @@ class MAINW:
         elif argumentto == 2:
             try:
                 sshcli.connect(confparser['DEFAULT']['SSH_ADDR'], username=confparser['DEFAULT']['SSH_USER'], password=confparser['DEFAULT']['SSH_PASSWD'])
-            except ssh_exception.AuthenticationException:
+            except paramiko.ssh_exception.AuthenticationException:
                 print("Can't login due wrong password or login. Change them and try again.")
+                exit(1)
+            except paramiko.ssh_exception.NoValidConnectionsError:
+                print("Can't open an SSH connection due unexpected error.")
                 exit(1)
             esxi_ver = sshcli.exec_command("vmware -v | awk {'print $3'}")
             if esxi_ver == "6.0.0" or "5.5.0": 
