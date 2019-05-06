@@ -43,7 +43,13 @@ class MAINW:
             except ssh_exception.AuthenticationException:
                 print("Can't login due wrong password or login. Change them and try again.")
                 exit(1)
-            sshcli.exec_command('powerOffVms && halt')
+            esxi_ver = sshcli.exec_command("vmware -v | awk {'print $3'}")
+            if esxi_ver == "6.0.0" or "5.5.0": 
+                sshcli.exec_command('powerOffVms')
+            elif esxi_ver == "6.5.0" or "6.7.0":
+                for vmid in sshcli.exec_command("vim-cmd vmsvc/getallvms | awk {'print $1'} | sed 's/Vmid//g' | sed 1d")
+                    sshcli.exec_command("vim-cmd vmsvc/power.shutdown ", vmid)
+            sshcli.exec_command('halt')
             print('Executed command to shutdown. Please wait')
             sshcli.close()
 
