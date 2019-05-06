@@ -14,6 +14,7 @@ Installation
 
 `git clone https://github.com/Sudokamikaze/ESXi-Waker.git`
 
+Install sshpass utility
 
 Ansible
 =====
