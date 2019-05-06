@@ -29,13 +29,13 @@ After that, execute main playbook by running this command:
 ```
 ansible-playbook \
     --ask-become-pass \ # NOTE! IF YOU SPECIFIED ROOT AS SSH USERNAME YOU DONT NEED TO USE THIS ARGUMENT!
-    playbooks/waker_deploy.yml
+    playbooks/deploy.yml
 ```
 
 After installation
 =====
 
-As you deployed script, you have to open your browser with `<your ip>:8001` address and add such actions:
+As you deployed script, you have to open your browser with `<your ip>:80` address and add such actions:
 
 | Step №| Explanation|Action|
 | ------------- |:-------------:|-------------|
