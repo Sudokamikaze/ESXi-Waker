@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from os import path
 from sys import exit, argv, stderr
 from configparser import ConfigParser
@@ -43,7 +43,10 @@ class MAINW:
             except ssh_exception.AuthenticationException:
                 print("Can't login due wrong password or login. Change them and try again.")
                 exit(1)
-            sshcli.exec_command('powerOffVms && halt')
+            except ssh_exception.NoValidConnectionsError:
+                print("Can't open an SSH connection due unexpected error.")
+                exit(1)
+            sshcli.exec_command('poweroff')
             print('Executed command to shutdown. Please wait')
             sshcli.close()
 
